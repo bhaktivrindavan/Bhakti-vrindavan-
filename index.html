@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bhakti Vrindavan</title>
+  <style>
+    body { font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; background-color: #fff8f0; color: #3c2f2f; }
+    h1, h2 { text-align: center; color: #7a3e3e; }
+    .container { max-width: 800px; margin: 30px auto; background: #fff; padding: 25px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+    .post { border-bottom: 1px dashed #ccc; padding: 15px 0; }
+    .post:last-child { border-bottom: none; }
+    .post-title { font-size: 1.4em; font-weight: bold; cursor: pointer; color: #4a2e2e; }
+    textarea, input { width: 100%; padding: 10px; margin: 10px 0; border-radius: 6px; border: 1px solid #ccc; font-size: 1em; }
+    button { background-color: #b36b00; color: white; border: none; padding: 10px 20px; font-size: 1em; border-radius: 5px; cursor: pointer; }
+    button:hover { background-color: #944f00; }
+    #post-detail { display: none; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Bhakti Vrindavan</h1>
+
+    <div id="create-post">
+      <h2>Naya Bhakti Post</h2>
+      <input type="text" id="title" placeholder="Post ka Sheershak (Title)" />
+      <textarea id="content" rows="5" placeholder="Apni bhavnaayein yahaan likhein..."></textarea>
+      <button onclick="addPost()">Prakaashit Karein</button>
+    </div>
+
+    <div id="post-list">
+      <h2>Bhakti Sankalan</h2>
+      <div id="posts"></div>
+    </div>
+
+    <div id="post-detail">
+      <button onclick="backToList()">Wapas Jaayein</button>
+      <h2 id="detail-title"></h2>
+      <p id="detail-content"></p>
+    </div>
+  </div>
+
+  <script>
+    let posts = JSON.parse(localStorage.getItem('posts')) || [];
+
+    function savePosts() {
+      localStorage.setItem('posts', JSON.stringify(posts));
+    }
+
+    function addPost() {
+      const title = document.getElementById('title').value.trim();
+      const content = document.getElementById('content').value.trim();
+      if (title && content) {
+        posts.unshift({ title, content });
+        savePosts();
+        renderPosts();
+        document.getElementById('title').value = '';
+        document.getElementById('content').value = '';
+      } else {
+        alert('Kripya title aur content likhein');
+      }
+    }
+
+    function renderPosts() {
+      const postsDiv = document.getElementById('posts');
+      postsDiv.innerHTML = '';
+      posts.forEach((post, index) => {
+        const div = document.createElement('div');
+        div.className = 'post';
+        div.innerHTML = `<div class="post-title" onclick="viewPost(${index})">${post.title}</div>`;
+        postsDiv.appendChild(div);
+      });
+    }
+
+    function viewPost(index) {
+      const post = posts[index];
+      document.getElementById('detail-title').innerText = post.title;
+      document.getElementById('detail-content').innerText = post.content;
+      document.getElementById('post-list').style.display = 'none';
+      document.getElementById('create-post').style.display = 'none';
+      document.getElementById('post-detail').style.display = 'block';
+    }
+
+    function backToList() {
+      document.getElementById('post-list').style.display = 'block';
+      document.getElementById('create-post').style.display = 'block';
+      document.getElementById('post-detail').style.display = 'none';
+    }
+
+    renderPosts();
+  </script>
+</body>
+</html>
